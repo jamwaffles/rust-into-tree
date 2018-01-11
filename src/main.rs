@@ -59,6 +59,28 @@ fn guard(data: &Vec<i32>) -> Context {
 	secondmutablething(&mut reversed)
 }
 
+fn immutablething(data: &Vec<i32>) -> (Context, usize) {
+	println!("\n\nData: ({}) {:?}", data.len(), data);
+
+	let mut context = Context { things: Vec::new(), children: None };
+	let mut skip: usize = 0;
+	let data_iter = data.iter();
+
+	for (i, item) in data_iter.enumerate() {
+		if *item == 10 {
+			let (children, skip) = immutablething(&data[i+1..].to_vec());
+
+			context.children = Some(Box::new(children));
+		} else {
+			context.things.push(*item);
+
+			skip += 1;
+		}
+	}
+
+	(context, skip)
+}
+
 fn main() {
 	let data: Vec<i32> = vec![
 		1, 2, 3,
@@ -68,7 +90,7 @@ fn main() {
 		6, 7, 8,
 	];
 
-	let out = guard(&data);
+	let out = immutablething(&data);
 
 	println!("{:?}", out);
 }
