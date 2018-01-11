@@ -53,16 +53,22 @@ fn secondmutablething(mut thing: &mut Vec<i32>) -> Context {
 	context
 }
 
+fn guard(data: &Vec<i32>) -> Context {
+	let mut reversed: Vec<i32> = data.iter().cloned().rev().collect();
+
+	secondmutablething(&mut reversed)
+}
+
 fn main() {
-	let mut data: Vec<i32> = vec![
+	let data: Vec<i32> = vec![
 		1, 2, 3,
 		10,
 		4, 5,
 		10,
 		6, 7, 8,
-	].into_iter().rev().collect();
+	];
 
-	let out = secondmutablething(&mut data);
+	let out = guard(&data);
 
 	println!("{:?}", out);
 }
