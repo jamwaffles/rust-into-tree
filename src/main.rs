@@ -59,26 +59,20 @@ fn guard(data: &Vec<i32>) -> Context {
 	secondmutablething(&mut reversed)
 }
 
-fn immutablething(data: &Vec<i32>) -> (Context, usize) {
-	println!("\n\nData: ({}) {:?}", data.len(), data);
-
+fn immutablething <'a>(mut iter: &mut std::slice::Iter<'a, i32>) -> Context {
 	let mut context = Context { things: Vec::new(), children: None };
-	let mut skip: usize = 0;
-	let data_iter = data.iter();
 
-	for (i, item) in data_iter.enumerate() {
+	while let Some(item) = iter.next() {
 		if *item == 10 {
-			let (children, skip) = immutablething(&data[i+1..].to_vec());
+			let children = immutablething(&mut iter);
 
 			context.children = Some(Box::new(children));
 		} else {
 			context.things.push(*item);
-
-			skip += 1;
 		}
 	}
 
-	(context, skip)
+	context
 }
 
 fn main() {
@@ -90,7 +84,7 @@ fn main() {
 		6, 7, 8,
 	];
 
-	let out = immutablething(&data);
+	let out = immutablething(&mut data.iter());
 
 	println!("{:?}", out);
 }
